@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa; /* Màu nền của trang */
+        }
+
+        .container {
+            background-color: #fff; /* Màu nền của container */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            margin: 20px auto; /* Canh giữa container */
+        }
+
+        h2 {
+            color: #007bff; /* Màu chữ của tiêu đề */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Màu nền của nút Thêm sản phẩm */
+            color: #fff; /* Màu chữ của nút Thêm sản phẩm */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Màu nền khi hover của nút Thêm sản phẩm */
+        }
+
+        .thead-dark th {
+            background-color: #343a40; /* Màu nền đen của header bảng */
+            color: #fff; /* Màu chữ trắng của header bảng */
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .table td, .table th {
+            text-align: center;
+        }
+
+        .btn-info {
+            background-color: #17a2b8; /* Màu nền của nút Xem */
+            color: #fff; /* Màu chữ của nút Xem */
+        }
+
+        .btn-info:hover {
+            background-color: #117a8b; /* Màu nền khi hover của nút Xem */
+        }
+
+        .btn-danger {
+            background-color: #dc3545; /* Màu nền của nút Xóa */
+            color: #fff; /* Màu chữ của nút Xóa */
+        }
+
+        .btn-danger:hover {
+            background-color: #bd2130; /* Màu nền khi hover của nút Xóa */
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{admin/index::index}"></div>
+
+<div class="content-body">
+    <h2>Danh Sách Chi Tiết Sản Phẩm</h2>
+    <div th:if="${errorMessage}" class="error-message">
+        <p class="error-text" th:text="${errorMessage}"></p>
+    </div>
+    <!-- Thêm mới ChiTietSanPham Form -->
+
+   <form th:action="@{/chitietsanpham/add}" th:object="${chiTietSanPham}" method="post" enctype="multipart/form-data">
+        <!-- Các trường thông tin của ChiTietSanPham -->
+        <div class="form-group">
+            <label th:for="tenSanPham">Tên sản phẩm:</label>
+            <input type="text" class="form-control" id="tenSanPham" th:field="*{tenSanPham}"/>
+            <i th:errors="*{tenSanPham}"></i><br>
+        </div>
+
+        <div class="form-group">
+            <label for="loaiSanPham">Loại sản phẩm:</label>
+            <select class="form-control" id="loaiSanPham" th:field="*{loaiSanPham.idSanPham}">
+                <option th:each="loaiSanPham : ${listLoaiSanPham}" th:value="${loaiSanPham.idSanPham}"
+                        th:text="${loaiSanPham.ten}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="chatLieu">Chất liệu:</label>
+            <select class="form-control" id="chatLieu" th:field="*{chatLieu.idChatLieu}">
+                <option th:each="chatLieu : ${listChatLieu}" th:value="${chatLieu.idChatLieu}"
+                        th:text="${chatLieu.ten}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="size">Size:</label>
+            <select class="form-control" id="size" th:field="*{size.idSize}">
+                <option th:each="size : ${listSize}" th:value="${size.idSize}" th:text="${size.ten}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="phongCach">Phong cách:</label>
+            <select class="form-control" id="phongCach" th:field="*{phongCach.idPhongCach}">
+                <option th:each="phongCach : ${listPhongCach}" th:value="${phongCach.idPhongCach}"
+                        th:text="${phongCach.ten}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="nsx">Nhà sản xuất:</label>
+            <select class="form-control" id="nsx" th:field="*{nsx.idNSX}">
+                <option th:each="nsx : ${listNSX}" th:value="${nsx.idNSX}" th:text="${nsx.ten}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="mauSac">Màu sắc:</label>
+            <select class="form-control" id="mauSac" th:field="*{mauSac.idMauSac}">
+                <option th:each="mauSac : ${listMauSac}" th:value="${mauSac.idMauSac}" th:text="${mauSac.ten}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="soLuong">Số lượng:</label>
+            <input type="number" class="form-control" id="soLuong" th:field="*{soLuong}"/>
+            <i th:errors="*{soLuong}"></i><br>
+
+        </div>
+
+        <div class="form-group">
+            <label for="giaBan">Giá bán:</label>
+            <input type="text" class="form-control" id="giaBan" th:field="*{giaBan}"/>
+            <i th:errors="*{giaBan}"></i><br>
+
+        </div>
+
+        <div class="form-group">
+            <label for="trangThai">Trạng thái:</label>
+            <input type="checkbox" id="trangThai" th:field="*{trangThai}"/>
+        </div>
+        <div class="form-group">
+            <label for="fileImages">Select Images:</label>
+            <input type="file" class="form-control-file" id="fileImages" name="fileImages" multiple required/>
+        </div>
+        <button type="submit" class="btn btn-rounded btn-info">
+            <span class="btn-icon-start text-info"><i
+                    class="fa fa-plus color-info"></i>
+                                    </span>Add
+        </button>
+    </form>
+
+    <!-- Bảng hiển thị danh sách chi tiết sản phẩm -->
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Tên Sản Phẩm</th>
+            <th>Loại Sản Phẩm</th>
+            <th>Chất Liệu</th>
+            <th>Size</th>
+            <th>Phong Cách</th>
+            <th>NSX</th>
+            <th>Màu Sắc</th>
+            <th>Số Lượng Còn Lại</th>
+            <th>Giá Bán</th>
+            <th>Trạng Thái</th>
+            <th colspan="2">Thao Tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Duyệt qua danh sách và hiển thị thông tin chi tiết sản phẩm -->
+        <tr th:each="chiTietSanPham : ${dsChiTietSanPham}">
+            <td th:text="${chiTietSanPham.idChiTietSanPham}"></td>
+            <td th:text="${chiTietSanPham.tenSanPham}"></td>
+            <td th:text="${chiTietSanPham.loaiSanPham != null ? chiTietSanPham.loaiSanPham.ten : 'N/A'}"></td>
+            <td th:text="${chiTietSanPham.chatLieu != null ? chiTietSanPham.chatLieu.ten : 'N/A'}"></td>
+            <td th:text="${chiTietSanPham.size != null ? chiTietSanPham.size.ten : 'N/A'}"></td>
+            <td th:text="${chiTietSanPham.phongCach != null ? chiTietSanPham.phongCach.ten : 'N/A'}"></td>
+            <td th:text="${chiTietSanPham.nsx != null ? chiTietSanPham.nsx.ten : 'N/A'}"></td>
+            <td th:text="${chiTietSanPham.mauSac != null ? chiTietSanPham.mauSac.ten : 'N/A'}"></td>
+            <td th:text="${chiTietSanPham.soLuong}"></td>
+            <td th:text="${chiTietSanPham.giaBan}"></td>
+            <td th:text="${chiTietSanPham.trangThai} ? 'Hoạt Động' : 'Ngừng Hoạt Động'"></td>
+            <td>
+            <div class="d-flex">
+                    <a th:href="@{'/chitietsanpham/detail/' + ${chiTietSanPham.idChiTietSanPham}}" class="btn btn-primary shadow btn-xs sharp me-1"><i
+                            class="fas fa-pencil-alt"></i></a>
+                    <a th:href="@{'/chitietsanpham/delete?id=' + ${chiTietSanPham.idChiTietSanPham}}"
+                   th:onclick="'return confirmDelete(event, ' + ${chiTietSanPham.idChiTietSanPham} + ')'" class="btn btn-danger shadow btn-xs sharp"><i
+                            class="fa fa-trash"></i></a>
+                </div>              
+                <script>
+                    const confirmDelete = (event, id) => {
+                        event.preventDefault();
+                        Swal.fire({
+                            title: 'Bạn có chắc muốn xóa không?',
+                            text: 'Thao tác này sẽ xóa dữ liệu vĩnh viễn!',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Xóa',
+                            cancelButtonText: 'Hủy'
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                window.location.href = `/chitietsanpham/delete?id=${id}`;
+                                Swal.fire('Xóa thành công!', '', 'success');
+                            }
+                        });
+                    };
+                </script>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+<script th:inline="javascript">
+    /* Kiểm tra nếu có successMessage thì hiển thị SweetAlert */
+    var successMessage = /*[[${successMessage}]]*/ null;
+    if (successMessage !== null) {
+        Swal.fire({
+            title: 'Save thành công!',
+            icon: 'success'
+        });
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
